@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../utils/api";
 import toast from 'react-hot-toast';
 import {
   PieChart,
@@ -67,16 +67,12 @@ const Reports = () => {
     setLoading(true);
     try {
       if (activeTab === "monthly") {
-        const response = await axios.get(
-          `http://localhost:5000/api/analytics/monthly-summary?year=${selectedYear}&month=${selectedMonth}`,
-          { withCredentials: true }
+        const response = await API.get(
+          `/analytics/monthly-summary?year=${selectedYear}&month=${selectedMonth}`
         );
         setMonthlySummary(response.data);
       } else {
-        const response = await axios.get(
-          `http://localhost:5000/api/analytics/yearly-summary?year=${selectedYear}`,
-          { withCredentials: true }
-        );
+        const response = await API.get(`/analytics/yearly-summary?year=${selectedYear}`);
         setYearlySummary(response.data);
       }
       setLoading(false);
@@ -92,10 +88,9 @@ const Reports = () => {
 
   const handleExport = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/analytics/export?year=${selectedYear}&month=${selectedMonth}`,
+      const response = await API.get(
+        `/analytics/export?year=${selectedYear}&month=${selectedMonth}`,
         {
-          withCredentials: true,
           responseType: "blob",
         }
       );
@@ -120,10 +115,9 @@ const Reports = () => {
       if (selectedMonth) params.append("month", selectedMonth);
       if (selectedYear) params.append("year", selectedYear);
 
-      const response = await axios.get(
-        `http://localhost:5000/api/analytics/export-pdf?${params}`,
+      const response = await API.get(
+        `/analytics/export-pdf?${params.toString()}`,
         {
-          withCredentials: true,
           responseType: "blob",
         }
       );

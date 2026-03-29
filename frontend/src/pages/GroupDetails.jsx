@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../utils/api';
 import toast from 'react-hot-toast';
 import {
   FaArrowLeft,
@@ -52,9 +52,7 @@ const GroupDetails = () => {
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/users/profile', {
-        withCredentials: true,
-      });
+      const response = await API.get('/users/profile');
       setCurrentUserId(response.data.user._id);
     } catch (err) {
       console.error('Error fetching current user:', err);
@@ -63,9 +61,7 @@ const GroupDetails = () => {
 
   const fetchGroupDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/trips/${id}`, {
-        withCredentials: true,
-      });
+      const response = await API.get(`/trips/${id}`);
       setGroup(response.data.trip);
       setLoading(false);
     } catch (err) {
@@ -77,10 +73,7 @@ const GroupDetails = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/expenses/trip/${id}`,
-        { withCredentials: true }
-      );
+      const response = await API.get(`/expenses/trip/${id}`);
       setExpenses(response.data.expenses);
     } catch (err) {
       console.error('Error fetching expenses:', err);
@@ -89,10 +82,7 @@ const GroupDetails = () => {
 
   const fetchSettlements = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/expenses/settlements/${id}`,
-        { withCredentials: true }
-      );
+      const response = await API.get(`/expenses/settlements/${id}`);
       setSettlements(response.data);
     } catch (err) {
       console.error('Error fetching settlements:', err);
@@ -117,14 +107,13 @@ const GroupDetails = () => {
     }
 
     try {
-      await axios.post(
-        'http://localhost:5000/api/expenses/create-expense',
+      await API.post(
+        '/expenses/create-expense',
         {
           tripId: id,
           ...newExpense,
           amount: parseFloat(newExpense.amount),
-        },
-        { withCredentials: true }
+        }
       );
 
       setShowAddExpense(false);
@@ -153,11 +142,7 @@ const GroupDetails = () => {
     }
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/trips/${id}/add-member`,
-        { email: memberEmail },
-        { withCredentials: true }
-      );
+      await API.post(`/trips/${id}/add-member`, { email: memberEmail });
 
       setShowAddMember(false);
       setMemberEmail('');
@@ -174,10 +159,7 @@ const GroupDetails = () => {
     }
 
     try {
-      await axios.delete(
-        `http://localhost:5000/api/trips/${id}/remove-member/${memberId}`,
-        { withCredentials: true }
-      );
+      await API.delete(`/trips/${id}/remove-member/${memberId}`);
       toast.success('Member removed successfully');
       fetchGroupDetails();
     } catch (err) {
@@ -188,11 +170,7 @@ const GroupDetails = () => {
 
   const handleGenerateInvite = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/trips/${id}/generate-invite`,
-        {},
-        { withCredentials: true }
-      );
+      const response = await API.post(`/trips/${id}/generate-invite`, {});
       setInviteLink(response.data.inviteLink);
       setShowInviteLink(true);
     } catch (err) {
@@ -212,9 +190,7 @@ const GroupDetails = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/expenses/${expenseId}`, {
-        withCredentials: true,
-      });
+      await API.delete(`/expenses/${expenseId}`);
       toast.success('Expense deleted successfully');
       fetchExpenses();
       fetchSettlements();
@@ -226,10 +202,7 @@ const GroupDetails = () => {
 
   const handleDeleteGroup = async () => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/trips/${id}`,
-        { withCredentials: true }
-      );
+      await API.delete(`/trips/${id}`);
       toast.success('Group deleted successfully');
       navigate('/groups');
     } catch (err) {

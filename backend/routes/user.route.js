@@ -33,7 +33,4 @@ router.delete("/profile", isAuthenticated, deleteUserAccount);
 // User search route (protected)
 router.get("/search", isAuthenticated, searchUsers);
 
-// User search route (protected)
-router.get("/search", isAuthenticated, searchUsers);
-
 export default router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-import axios from 'axios';
+import API from '../utils/api';
 
 export default function QuickSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,12 +60,8 @@ export default function QuickSearch() {
       setLoading(true);
       try {
         const [groupsRes, usersRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/trips?search=${query}`, {
-            withCredentials: true,
-          }).catch(() => ({ data: { trips: [] } })),
-          axios.get(`http://localhost:5000/api/users/search?query=${query}`, {
-            withCredentials: true,
-          }).catch(() => ({ data: { users: [] } }))
+          API.get(`/trips?search=${query}`).catch(() => ({ data: { trips: [] } })),
+          API.get(`/users/search?query=${query}`).catch(() => ({ data: { users: [] } }))
         ]);
 
         setResults({

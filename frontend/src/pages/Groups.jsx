@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../utils/api';
 import { FaPlus, FaUsers, FaCalendar, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import { SkeletonCard } from '../components/SkeletonLoader';
 import SwipeableItem from '../components/SwipeableItem';
@@ -30,9 +30,7 @@ const Groups = () => {
   const fetchGroups = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/trips', {
-        withCredentials: true,
-      });
+      const response = await API.get('/trips');
       setGroups(response.data.trips);
       setLoading(false);
     } catch (err) {
@@ -56,13 +54,12 @@ const Groups = () => {
     }
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/trips/create-trip',
+      const response = await API.post(
+        '/trips/create-trip',
         {
           ...newGroup,
           members: selectedMembers.map(m => m._id),
-        },
-        { withCredentials: true }
+        }
       );
 
       setGroups([response.data.trip, ...groups]);
@@ -85,10 +82,7 @@ const Groups = () => {
 
     setSearchLoading(true);
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/search?query=${query}`,
-        { withCredentials: true }
-      );
+      const response = await API.get(`/users/search?query=${query}`);
       setSearchResults(response.data.users || []);
     } catch (err) {
       console.error('Error searching users:', err);

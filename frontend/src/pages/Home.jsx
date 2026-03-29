@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserGreeting from "../components/home/UserGreeting";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../utils/api";
 import PullToRefresh from "../components/PullToRefresh";
 import { FaWallet, FaCalendarAlt, FaChartLine, FaReceipt } from "react-icons/fa";
 import EmptyState from "../components/EmptyState";
@@ -25,10 +25,7 @@ export default function Home() {
 
   const fetchBudgetStatus = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/analytics/budget-status",
-        { withCredentials: true }
-      );
+      const response = await API.get("/analytics/budget-status");
       setBudgetStatus(response.data);
     } catch (err) {
       console.error("Error fetching budget status:", err);
@@ -41,9 +38,8 @@ export default function Home() {
       const year = today.getFullYear();
       const month = today.getMonth() + 1;
       
-      const response = await axios.get(
-        `http://localhost:5000/api/analytics/monthly-summary?year=${year}&month=${month}`,
-        { withCredentials: true }
+      const response = await API.get(
+        `/analytics/monthly-summary?year=${year}&month=${month}`
       );
       setQuickStats(response.data);
     } catch (err) {

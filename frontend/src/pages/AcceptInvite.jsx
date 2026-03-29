@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../utils/api';
 
 export default function AcceptInvite() {
   const { token } = useParams();
@@ -11,11 +11,7 @@ export default function AcceptInvite() {
   useEffect(() => {
     const acceptInvite = async () => {
       try {
-        const response = await axios.post(
-          `http://localhost:5000/api/trips/accept-invite/${token}`,
-          {},
-          { withCredentials: true }
-        );
+        const response = await API.post(`/trips/accept-invite/${token}`, {});
 
         // Redirect to the group details page
         setTimeout(() => {

@@ -11,13 +11,29 @@ import analyticsRoutes from "./routes/analytics.route.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
+
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(sessionConfig);
@@ -30,7 +46,7 @@ app.use("/api/analytics", analyticsRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.json({ message: "🚀`Server running on port ${PORT}`" });
+  res.json({ message: `Server running on port ${PORT}` });
 });
 
 // Start server with DB connection
