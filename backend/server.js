@@ -9,10 +9,23 @@ import expenseRoutes from "./routes/expense.route.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-// MiddlewarePORT
-app.use(cors());
+// In production, allow only configured origins. In development, allow all.
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,7 +36,11 @@ app.use("/api/expenses", expenseRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.json({ message: "🚀`Server running on port ${PORT}`" });
+  res.json({ message: `Server running on port ${PORT}` });
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 // Start server with DB connection
