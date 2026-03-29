@@ -70,17 +70,21 @@ It provides **secure authentication, budgeting tools, detailed analytics, and gr
 
 ---
 
-## 🎯 Project Goal
+## 🚀 Installation
 
-Hisaab-Kitaab is built to make expense management simple, transparent, and practical for both individuals and groups.
-The focus is on clean tracking, better spending insights, and easier collaboration for shared expenses.
+```bash
+# Clone the repository
+git clone https://github.com/your-username/hisabkitab.git
 
----
+# Navigate to project folder
+cd hisabkitab
 
-## 📌 Current Scope
+# Install dependencies (Frontend + Backend separately)
+cd frontend
+npm install
 
-* User onboarding with secure authentication
-* Personal income and expense tracking
-* Budget planning and alert flow
-* Visual analytics for money habits
-* Group expense sharing and split management
+cd ../backend
+npm install
+
+# Run development servers
+npm run dev
