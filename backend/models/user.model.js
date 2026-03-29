@@ -7,13 +7,11 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     mobile: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     password: {
         type: String,
@@ -45,6 +43,16 @@ const userSchema = new mongoose.Schema({
     }
 },
     { timestamps: true }
+);
+
+userSchema.index(
+    { email: 1 },
+    { name: 'user_email_unique', unique: true }
+);
+
+userSchema.index(
+    { mobile: 1 },
+    { name: 'user_mobile_unique', unique: true }
 );
 
 const User = mongoose.model('User', userSchema);

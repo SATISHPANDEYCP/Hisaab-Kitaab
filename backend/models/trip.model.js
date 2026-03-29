@@ -13,7 +13,7 @@ const tripSchema = new mongoose.Schema({
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   isActive: { type: Boolean, default: true },
   settledDate: { type: Date },
-  inviteToken: { type: String, unique: true, sparse: true },
+  inviteToken: { type: String },
   inviteTokenExpiry: { type: Date }
 }, { timestamps: true });
 
@@ -30,8 +30,11 @@ tripSchema.methods.isInviteTokenValid = function() {
 };
 
 // Add index for faster queries
-tripSchema.index({ createdBy: 1 });
-tripSchema.index({ members: 1 });
-tripSchema.index({ inviteToken: 1 });
+tripSchema.index({ createdBy: 1 }, { name: "trip_created_by_idx" });
+tripSchema.index({ members: 1 }, { name: "trip_members_idx" });
+tripSchema.index(
+  { inviteToken: 1 },
+  { name: "invite_token_unique_sparse", unique: true, sparse: true }
+);
 
 export default mongoose.model("Trip", tripSchema);
