@@ -256,8 +256,8 @@ const sendEmail = async ({ to, subject, html, text, cc, bcc, attachments }) => {
   }
 };
 
-const getFrontendBaseUrl = () => {
-  const frontendUrl = getEnv("FRONTEND_URL", "CLIENT_URL", "APP_URL");
+const getFrontendBaseUrl = (fallbackUrl = "") => {
+  const frontendUrl = getEnv("FRONTEND_URL", "CLIENT_URL", "APP_URL") || fallbackUrl;
   return frontendUrl.split(",")[0].trim().replace(/\/$/, "");
 };
 
@@ -310,8 +310,8 @@ export const sendOTPEmail = async (email, otp, name) => {
 };
 
 // Send password reset email
-export const sendPasswordResetEmail = async (email, resetToken, name) => {
-  const frontendBaseUrl = getFrontendBaseUrl();
+export const sendPasswordResetEmail = async (email, resetToken, name, fallbackUrl = "") => {
+  const frontendBaseUrl = getFrontendBaseUrl(fallbackUrl);
 
   if (!frontendBaseUrl) {
     console.error("Cannot send password reset email: missing FRONTEND_URL/CLIENT_URL/APP_URL");

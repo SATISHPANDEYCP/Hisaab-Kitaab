@@ -293,7 +293,13 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send reset email
-    const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
+    const requestOrigin = req.get("origin") || req.headers.origin || "";
+    const emailResult = await sendPasswordResetEmail(
+      email,
+      resetToken,
+      user.name,
+      requestOrigin
+    );
     if (!emailResult.success) {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpiry = undefined;
