@@ -1,6 +1,13 @@
 import tripModel from "../models/trip.model.js";
 import userModel from "../models/user.model.js";
 
+const getFrontendBaseUrl = () => {
+  const configuredUrl =
+    process.env.FRONTEND_URL || process.env.CLIENT_URL || process.env.CORS_ORIGIN || "http://localhost:5173";
+
+  return configuredUrl.split(",")[0].trim().replace(/\/$/, "");
+};
+
 // Create a new trip/group
 const createTrip = async (req, res) => {
   const { tripName, description, category, members } = req.body;
@@ -260,7 +267,7 @@ const generateInviteLink = async (req, res) => {
     const token = trip.generateInviteToken();
     await trip.save();
 
-    const inviteLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/invite/${token}`;
+    const inviteLink = `${getFrontendBaseUrl()}/invite/${token}`;
 
     res.status(200).json({
       message: "Invite link generated successfully",

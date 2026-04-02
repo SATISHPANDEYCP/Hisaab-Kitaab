@@ -15,10 +15,24 @@ const PORT = process.env.PORT || 5000;
 
 const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, "");
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-  .split(",")
-  .map((origin) => normalizeOrigin(origin))
-  .filter(Boolean);
+const getConfiguredOrigins = () => {
+  const originSources = [
+    process.env.FRONTEND_URL,
+    process.env.CLIENT_URL,
+    process.env.CORS_ORIGIN,
+  ];
+
+  return originSources
+    .flatMap((value) => (value ? value.split(",") : []))
+    .map((origin) => normalizeOrigin(origin))
+    .filter(Boolean);
+};
+
+const allowedOrigins = getConfiguredOrigins();
+
+if (allowedOrigins.length === 0) {
+  allowedOrigins.push("http://localhost:5173");
+}
 
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
