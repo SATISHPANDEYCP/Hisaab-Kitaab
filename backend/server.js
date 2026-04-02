@@ -15,6 +15,15 @@ const PORT = process.env.PORT || 5000;
 
 const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, "");
 
+const isHostedFrontendOrigin = (origin) => {
+  try {
+    const host = new URL(origin).hostname;
+    return host.endsWith(".vercel.app") || host.endsWith(".netlify.app");
+  } catch {
+    return false;
+  }
+};
+
 const getConfiguredOrigins = () => {
   const originSources = [
     process.env.FRONTEND_URL,
@@ -49,6 +58,10 @@ app.use(
       const normalizedRequestOrigin = normalizeOrigin(origin);
 
       if (allowedOrigins.includes(normalizedRequestOrigin)) {
+        return callback(null, true);
+      }
+
+      if (process.env.NODE_ENV === "production" && isHostedFrontendOrigin(normalizedRequestOrigin)) {
         return callback(null, true);
       }
 

@@ -1,4 +1,6 @@
 import userModel from "../models/user.model.js";
+import tripModel from "../models/trip.model.js";
+import expenseModel from "../models/expense.model.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import crypto from "crypto";
@@ -422,7 +424,23 @@ const deleteUserAccount = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // TODO: Delete user's expenses and group associations
+    const userId = req.session.userId;
+
+    const createdTrips = await tripModel.find({ createdBy: userId }).select("_id members");
+    const createdTripIds = createdTrips.map((trip) => trip._id);
+
+    await Promise.all([
+      expenseModel.deleteMany({
+        $or: [
+          { paidBy: userId },
+          { "splitDetails.user": userId },
+          { tripId: { $in: createdTripIds } },
+        ],
+      }),
+      tripModel.deleteMany({ createdBy: userId }),
+      tripModel.updateMany({ members: userId }, { $pull: { members: userId } }),
+    ]);
+
     await userModel.findByIdAndDelete(req.session.userId);
 
     // Destroy session

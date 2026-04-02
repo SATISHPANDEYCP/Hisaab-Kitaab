@@ -87,7 +87,6 @@ export default function QuickSearch() {
 
   const handleUserClick = (userId) => {
     // Could navigate to a user profile or start a chat
-    console.log('User clicked:', userId);
     setIsOpen(false);
     setQuery('');
   };

@@ -45,31 +45,25 @@ export default function SignUp() {
     }
 
     try {
-      console.log("Sending signup request...", formData.email);
       const res = await API.post("/users/signup", formData);
-      console.log("Signup successful:", res.data);
       
       setMessage({ type: "success", text: res.data.message });
       // Redirect to OTP verification page
       setTimeout(() => navigate("/verify-otp", { state: { email: formData.email } }), 1500);
     } catch (error) {
       console.error("Signup error:", error);
-      console.error("Error response:", error.response);
       
       let errorMessage = "Something went wrong. Please try again.";
       
       if (error.response) {
         // Server responded with error
         errorMessage = error.response.data?.message || errorMessage;
-        console.log("Server error message:", errorMessage);
       } else if (error.request) {
         // Request made but no response
         errorMessage = "Cannot connect to server. Please check your connection.";
-        console.log("No response from server");
       } else {
         // Error in request setup
         errorMessage = error.message || errorMessage;
-        console.log("Request setup error:", errorMessage);
       }
       
       setMessage({
