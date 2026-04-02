@@ -185,7 +185,12 @@ const resendOTP = async (req, res) => {
     user.otpExpiry = otpExpiry;
     await user.save();
 
-    await sendOTPEmail(email, otp, user.name);
+    const emailResult = await sendOTPEmail(email, otp, user.name);
+    if (!emailResult.success) {
+      return res.status(500).json({
+        message: "Failed to resend OTP email. Please try again later.",
+      });
+    }
 
     res.status(200).json({ message: "OTP has been resent to your email." });
   } catch (error) {
@@ -288,7 +293,16 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send reset email
-    await sendPasswordResetEmail(email, resetToken, user.name);
+    const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
+    if (!emailResult.success) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpiry = undefined;
+      await user.save();
+
+      return res.status(500).json({
+        message: "Failed to send password reset email. Please try again later.",
+      });
+    }
 
     res.status(200).json({ message: "Password reset link sent to your email." });
   } catch (error) {
